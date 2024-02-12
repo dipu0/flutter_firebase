@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase_setup/features/auth/presentation/forgot_password.dart';
 import 'package:flutter_firebase_setup/features/auth/presentation/signup_page.dart';
 import 'package:flutter_firebase_setup/features/auth/widget/ui_helper.dart';
 import 'package:flutter_firebase_setup/features/home_page/presentation/home_page.dart';
@@ -22,11 +23,9 @@ class _LogInPageState extends State<LogInPage> {
     }
     try {
       await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
-      UiHelper.customAlartDialog(context, 'Success', 'Log In Successful');
-      await Future.delayed(const Duration(seconds: 2));
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const HomePage()));
+          .signInWithEmailAndPassword(email: email, password: password)
+          .then((value) => Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const HomePage())));
     } on FirebaseAuthException catch (e) {
       UiHelper.customAlartDialog(context, 'Error', e.message.toString());
     }
@@ -48,6 +47,32 @@ class _LogInPageState extends State<LogInPage> {
               UiHelper.customTextField(
                   passwordController, 'Password', Icons.lock,
                   isPassword: true),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ForgotPassword(),
+                        ),
+                      );
+                    },
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all<EdgeInsets>(
+                        const EdgeInsets.symmetric(
+                            vertical: 4.0, horizontal: 8.0),
+                      ),
+                    ),
+                    child: Text(
+                      "Forgot password?",
+                      style: TextStyle(
+                          fontSize: 14.0), // Adjust the font size as needed
+                    ),
+                  ),
+                ],
+              ),
               UiHelper.customButton('Log In', () {
                 _LogIn(emailController.text, passwordController.text);
               }),
